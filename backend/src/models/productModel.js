@@ -6,7 +6,7 @@ const productSelect = `SELECT id,
             description,
             category,
             price,
-            image AS "imageUrl",
+            image_url AS "imageUrl",
             stock,
             created_at AS "createdAt"`;
 
