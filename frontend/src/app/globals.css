@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Amazon.com-style palette & rhythm */
+:root {
+  --amz-page-bg: #eaeded;
+  --amz-surface: #ffffff;
+  --amz-text: #0f1111;
+  --amz-muted: #565959;
+  --amz-link: #007185;
+  --amz-link-hover: #171717;
+  --amz-nav: #131921;
+  --amz-nav-sub: #232f3e;
+  --amz-search: #febd69;
+  --amz-search-hover: #f3a847;
+  --amz-yellow: #ffd814;
+  --amz-yellow-hover: #f7ca00;
+  --amz-orange: #ffa41c;
+  --amz-orange-hover: #fa8900;
+  --amz-border: #d5d9d9;
+  --amz-ring-search: #ff9900;
+  --amz-container: 1500px;
+  --amz-nav-sticky-offset: 108px;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  color: var(--amz-text);
+  background: var(--amz-page-bg);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+@layer components {
+  /* Primary CTA — matches “Add to Cart” */
+  .amz-btn-add {
+    @apply min-h-[44px] w-full touch-manipulation rounded-lg py-2.5 text-center text-[13px] font-normal text-[#0f1111] shadow-sm transition-colors duration-100 sm:min-h-0 sm:py-2;
+    background: linear-gradient(to bottom, #f7dfa5, #f0c14b);
+    border: 1px solid #a88734;
+    box-shadow: 0 2px 5px 0 rgba(213, 217, 217, 0.5);
+  }
+  .amz-btn-add:hover:not(:disabled) {
+    background: linear-gradient(to bottom, #f5d78e, #eeba37);
+  }
+  .amz-btn-add:active:not(:disabled) {
+    background: #f0c14b;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .amz-btn-add:disabled {
+    @apply cursor-not-allowed opacity-45;
+  }
+
+  /* Secondary primary — “Buy Now” */
+  .amz-btn-buy {
+    @apply min-h-[44px] w-full touch-manipulation rounded-lg py-2.5 text-center text-[13px] font-normal text-[#0f1111] shadow-sm transition-colors duration-100 sm:min-h-0 sm:py-2;
+    background: linear-gradient(to bottom, #f7dfa5, #f0c14b);
+    border: 1px solid #ca8618;
+    box-shadow: 0 2px 5px 0 rgba(213, 217, 217, 0.5);
+  }
+  .amz-btn-buy:hover:not(:disabled) {
+    background: linear-gradient(to bottom, #f8d99a, #edad11);
+  }
+  .amz-btn-buy:active:not(:disabled) {
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12);
+  }
+  .amz-btn-buy:disabled {
+    @apply cursor-not-allowed opacity-45;
+  }
+
+  /* Neutral / outline button */
+  .amz-btn-secondary {
+    @apply min-h-[44px] w-full touch-manipulation rounded-lg border border-[#d5d9d9] bg-white py-2.5 text-center text-[13px] font-normal text-[#0f1111] shadow-sm transition-colors hover:bg-[#f7fafa] sm:min-h-0 sm:py-2;
+    box-shadow: 0 2px 5px 0 rgba(213, 217, 217, 0.35);
+  }
+
+  /* Search submit (navbar) */
+  .amz-search-submit {
+    @apply flex min-h-[44px] min-w-[48px] shrink-0 touch-manipulation items-center justify-center rounded-r-md border border-[#555555] border-l-[#656565] bg-[#febd69] px-2 text-[#0f1111] sm:min-h-0 sm:min-w-[52px] md:min-w-[55px];
+  }
+  .amz-search-submit:hover {
+    background: #f3a847;
+  }
+  .amz-search-submit:active {
+    background: #eeba37;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Page shell — same max width as amazon.com main content */
+  .amz-container {
+    @apply mx-auto w-full min-w-0 max-w-[1500px] px-3 sm:px-4 md:px-5 lg:px-6;
+  }
+
+  /* Form controls: 16px+ on small screens reduces iOS zoom-on-focus */
+  .amz-field {
+    @apply mt-1 min-h-[44px] w-full rounded-sm border border-[#d5d9d9] px-3 py-2.5 text-base shadow-inner focus:border-[#007185] focus:outline-none focus:ring-1 focus:ring-[#007185] sm:min-h-0 sm:text-sm;
+  }
+}
