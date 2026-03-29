@@ -1,11 +1,9 @@
 import { DEFAULT_USER_ID } from "./constants";
 
-// ✅ FIX: safer baseUrl (prevents SSR + fetch issues)
+// ✅ FIXED: production-safe baseUrl (no localhost issue)
 const baseUrl =
   process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
-  (typeof window !== "undefined"
-    ? "http://localhost:3001"
-    : "http://127.0.0.1:3001"); // ✅ FIXED
+  "https://amazon-clone-k9mj.onrender.com";
 
 export type Product = {
   id: number;
@@ -111,7 +109,6 @@ export async function getProduct(id: number): Promise<Product> {
 // ================= CART =================
 
 export async function getCart(userId = DEFAULT_USER_ID): Promise<CartResponse> {
-  // ✅ FIX: enforce real user
   if (!userId || userId === DEFAULT_USER_ID) {
     throw new Error("User not authenticated");
   }
@@ -138,7 +135,6 @@ export async function postCartItem(input: {
   merge?: boolean;
 }): Promise<PostCartItemResult> {
 
-  // ✅ FIX
   if (!input.userId || input.userId === DEFAULT_USER_ID) {
     throw new Error("User not authenticated");
   }
@@ -167,7 +163,6 @@ export async function deleteCartItem(
   userId = DEFAULT_USER_ID
 ): Promise<void> {
 
-  // ✅ FIX
   if (!userId || userId === DEFAULT_USER_ID) {
     throw new Error("User not authenticated");
   }
@@ -200,7 +195,6 @@ export async function postOrder(input: {
   shipping: ShippingPayload;
 }): Promise<{ orderId: number; total: number; createdAt: string }> {
 
-  // ✅ FIX
   if (!input.userId || input.userId === DEFAULT_USER_ID) {
     throw new Error("User not authenticated");
   }
@@ -209,7 +203,7 @@ export async function postOrder(input: {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      userId: input.userId, // ✅ FORCE REAL USER
+      userId: input.userId,
       shipping: input.shipping,
     }),
   });
