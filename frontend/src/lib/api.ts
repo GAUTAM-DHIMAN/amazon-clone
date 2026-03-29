@@ -1,9 +1,11 @@
 import { DEFAULT_USER_ID } from "./constants";
 
-// ✅ FIXED: production-safe baseUrl (no localhost issue)
-const baseUrl =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
-  "https://amazon-clone-k9mj.onrender.com";
+// ✅ FINAL FIX: strict + safe base URL
+const baseUrl = process.env.NEXT_PUBLIC_API_URL
+  ? process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "")
+  : "https://amazon-clone-k9mj.onrender.com";
+
+// ================= TYPES =================
 
 export type Product = {
   id: number;
@@ -39,13 +41,25 @@ export type CartResponse = {
   subtotal: number;
 };
 
+export type AuthResponse = {
+  status: string;
+  token: string;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
+};
+
+// ================= HELPER =================
+
 async function handleJson<T>(res: Response): Promise<T> {
   let data: any = null;
 
   try {
     const text = await res.text();
     data = text ? JSON.parse(text) : null;
-  } catch (parseError) {
+  } catch {
     if (!res.ok) {
       throw new Error(`Request failed (${res.status})`);
     }
@@ -53,14 +67,11 @@ async function handleJson<T>(res: Response): Promise<T> {
   }
 
   if (!res.ok) {
-    const message =
-      data && typeof data.message === "string"
-        ? data.message
-        : data && typeof data.error === "string"
-        ? data.error
-        : `Request failed (${res.status})`;
-
-    throw new Error(message);
+    throw new Error(
+      data?.message ||
+      data?.error ||
+      `Request failed (${res.status})`
+    );
   }
 
   return data as T;
@@ -73,16 +84,12 @@ export async function getProducts(filters?: {
   category?: string | null;
 }): Promise<Product[]> {
   const sp = new URLSearchParams();
-  const q = filters?.q?.trim();
-  const category = filters?.category?.trim();
 
-  if (q) sp.set("q", q);
-  if (category) sp.set("category", category);
-
-  const qs = sp.toString();
+  if (filters?.q?.trim()) sp.set("q", filters.q.trim());
+  if (filters?.category?.trim()) sp.set("category", filters.category.trim());
 
   const res = await fetch(
-    `${baseUrl}/products${qs ? `?${qs}` : ""}`,
+    `${baseUrl}/products${sp.toString() ? `?${sp}` : ""}`,
     { cache: "no-store" }
   );
 
@@ -114,67 +121,49 @@ export async function getCart(userId = DEFAULT_USER_ID): Promise<CartResponse> {
   }
 
   const res = await fetch(
-    `${baseUrl}/cart?userId=${encodeURIComponent(String(userId))}`,
-    { cache: "no-store" }
+    `${baseUrl}/cart?userId=${encodeURIComponent(String(userId))}`
   );
 
   return handleJson<CartResponse>(res);
 }
-
-export type PostCartItemResult = {
-  cartId: number;
-  userId: number;
-  productId: number;
-  quantity: number;
-};
 
 export async function postCartItem(input: {
   userId?: number;
   productId: number;
   quantity: number;
   merge?: boolean;
-}): Promise<PostCartItemResult> {
-
+}) {
   if (!input.userId || input.userId === DEFAULT_USER_ID) {
     throw new Error("User not authenticated");
   }
 
-  const body: Record<string, unknown> = {
-    userId: input.userId,
-    productId: input.productId,
-    quantity: input.quantity,
-  };
-
-  if (input.merge === true) {
-    body.merge = true;
-  }
-
   const res = await fetch(`${baseUrl}/cart`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(input),
   });
 
-  return handleJson<PostCartItemResult>(res);
+  return handleJson(res);
 }
 
 export async function deleteCartItem(
   cartId: number,
   userId = DEFAULT_USER_ID
-): Promise<void> {
-
+) {
   if (!userId || userId === DEFAULT_USER_ID) {
     throw new Error("User not authenticated");
   }
 
   const res = await fetch(
-    `${baseUrl}/cart/${cartId}?userId=${encodeURIComponent(String(userId))}`,
+    `${baseUrl}/cart/${cartId}?userId=${userId}`,
     { method: "DELETE" }
   );
 
   if (res.status === 204) return;
 
-  await handleJson(res);
+  return handleJson(res);
 }
 
 // ================= ORDERS =================
@@ -194,34 +183,22 @@ export async function postOrder(input: {
   userId?: number;
   shipping: ShippingPayload;
 }): Promise<{ orderId: number; total: number; createdAt: string }> {
-
   if (!input.userId || input.userId === DEFAULT_USER_ID) {
     throw new Error("User not authenticated");
   }
 
   const res = await fetch(`${baseUrl}/orders`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      userId: input.userId,
-      shipping: input.shipping,
-    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(input),
   });
 
   return handleJson(res);
 }
 
-// ================= AUTH =================
-
-export type AuthResponse = {
-  status: string;
-  token: string;
-  user: {
-    id: number;
-    name: string;
-    email: string;
-  };
-};
+// ================= AUTH (🔥 FIXED) =================
 
 export async function login(input: {
   email: string;
@@ -229,7 +206,10 @@ export async function login(input: {
 }): Promise<AuthResponse> {
   const res = await fetch(`${baseUrl}/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include", // ✅ IMPORTANT FIX
     body: JSON.stringify(input),
   });
 
@@ -243,22 +223,17 @@ export async function signup(input: {
 }): Promise<AuthResponse> {
   const res = await fetch(`${baseUrl}/api/auth/signup`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include", // ✅ IMPORTANT FIX
     body: JSON.stringify(input),
   });
 
   return handleJson<AuthResponse>(res);
 }
 
-// ================= EXTRA =================
-
-export async function getSimilarProducts(category: string): Promise<Product[]> {
-  const res = await fetch(
-    `${baseUrl}/products?category=${encodeURIComponent(category)}`,
-    { cache: "no-store" }
-  );
-  return handleJson<Product[]>(res);
-}
+// ================= WISHLIST =================
 
 export async function getWishlist(userId: number) {
   const res = await fetch(`${baseUrl}/wishlist/${userId}`);
@@ -268,17 +243,32 @@ export async function getWishlist(userId: number) {
 export async function addWishlist(userId: number, productId: number) {
   const res = await fetch(`${baseUrl}/wishlist`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({ userId, productId }),
   });
+
   return handleJson(res);
 }
 
 export async function removeWishlist(userId: number, productId: number) {
   const res = await fetch(`${baseUrl}/wishlist`, {
     method: "DELETE",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({ userId, productId }),
   });
+
+  return handleJson(res);
+}
+
+// ================= EXTRA =================
+
+export async function getSimilarProducts(category: string) {
+  const res = await fetch(
+    `${baseUrl}/products?category=${encodeURIComponent(category)}`
+  );
   return handleJson(res);
 }
