@@ -30,6 +30,9 @@ app.get('/health', async (req, res) => {
 });
 
 // ================= ROUTES =================
+app.get('/', (req, res) => {
+  res.send('API Running 🚀');
+});
 app.use('/api/auth', authRoutes);
 app.use('/products', productRoutes);
 app.use('/cart', cartRoutes);
