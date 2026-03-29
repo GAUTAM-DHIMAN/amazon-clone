@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "db:setup": "node src/db/setup.js"
+    "db:setup": "node src/db/setup.js",
+    "seed:large": "node seedLargeDataset.js",
+    "seed:basic": "node seedProducts.js"
   },
   "dependencies": {
     "@types/js-cookie": "^3.0.6",
