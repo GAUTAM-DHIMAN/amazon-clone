@@ -3,6 +3,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import Cookie from "js-cookie";
 
+const baseUrl =
+  typeof window !== "undefined" && process.env.NEXT_PUBLIC_API_URL
+    ? process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "")
+    : "https://amazon-clone-k9mj.onrender.com";
+
 const AuthContext = createContext<any>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -37,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { success: false, message: "Password must be 6+ characters." };
 
     try {
-      const res = await fetch("http://localhost:3001/api/auth/signup", {
+      const res = await fetch(`${baseUrl}/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
@@ -68,7 +73,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { success: false, message: "Enter a valid email." };
 
     try {
-      const res = await fetch("http://localhost:3001/api/auth/login", {
+      const res = await fetch(`${baseUrl}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

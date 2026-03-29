@@ -3,6 +3,11 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 
+const baseUrl =
+  typeof window !== "undefined" && process.env.NEXT_PUBLIC_API_URL
+    ? process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "")
+    : "https://amazon-clone-k9mj.onrender.com";
+
 export default function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const { user } = useAuth();
@@ -10,7 +15,7 @@ export default function OrdersPage() {
   useEffect(() => {
     if (!user) return;
 
-    fetch(`http://localhost:3001/orders/user/${user.id}`)
+    fetch(`${baseUrl}/orders/user/${user.id}`)
       .then((res) => res.json())
       .then((data) => setOrders(data))
       .catch((err) => console.error(err));
