@@ -4,7 +4,8 @@ import { checkDatabase } from './config/database.js';
 import productRoutes from './routes/productRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
-import authRoutes from './routes/authRoutes.js'; // NEW: Import Auth Routes
+import wishlistRoutes from './routes/wishlistRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
@@ -16,8 +17,10 @@ app.use(
     credentials: true,
   })
 );
+
 app.use(express.json());
 
+// HEALTH CHECK
 app.get('/health', async (req, res) => {
   const db = await checkDatabase();
   res.status(db ? 200 : 503).json({
@@ -26,13 +29,14 @@ app.get('/health', async (req, res) => {
   });
 });
 
-// --- ROUTES ---
-app.use('/api/auth', authRoutes); // NEW: Auth endpoints (matches your frontend fetch)
+// ================= ROUTES =================
+app.use('/api/auth', authRoutes);
 app.use('/products', productRoutes);
 app.use('/cart', cartRoutes);
 app.use('/orders', orderRoutes);
+app.use('/wishlist', wishlistRoutes); // ✅ FIXED POSITION
 
-// --- ERROR HANDLING ---
+// ================= ERROR HANDLERS =================
 app.use(notFoundHandler);
 app.use(errorHandler);
 

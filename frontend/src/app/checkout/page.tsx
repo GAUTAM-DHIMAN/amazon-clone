@@ -7,6 +7,7 @@ import { CheckoutAddressForm } from "@/components/checkout/CheckoutAddressForm";
 import { CheckoutOrderSummary } from "@/components/checkout/CheckoutOrderSummary";
 import { useCart } from "@/context/CartContext";
 import { postOrder, type ShippingPayload } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
 
 const initialShipping: ShippingPayload = {
   fullName: "",
@@ -25,6 +26,7 @@ export default function CheckoutPage() {
   const [shipping, setShipping] = useState<ShippingPayload>(initialShipping);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const { user } = useAuth(); // ✅ already present
 
   const items = cart?.items ?? [];
   const subtotal = cart?.subtotal ?? 0;
@@ -33,7 +35,15 @@ export default function CheckoutPage() {
     e.preventDefault();
     setFormError(null);
     setSubmitting(true);
+
     try {
+      // ✅ SAFETY CHECK (ADDED)
+      if (!user) {
+        setFormError("Please login to place order");
+        setSubmitting(false);
+        return;
+      }
+
       const payload: ShippingPayload = {
         fullName: shipping.fullName.trim(),
         phone: shipping.phone?.trim() || undefined,
@@ -45,7 +55,12 @@ export default function CheckoutPage() {
         country: shipping.country.trim(),
       };
 
-      const res = await postOrder({ shipping: payload });
+      // ✅ FIXED (userId added)
+      const res = await postOrder({
+        userId: user.id,
+        shipping: payload,
+      });
+
       await refresh();
       router.push(`/order-confirmation?orderId=${res.orderId}`);
     } catch (err) {
@@ -69,7 +84,9 @@ export default function CheckoutPage() {
     return (
       <div className="amz-container py-12">
         <div className="border border-[#d5d9d9] bg-white p-10 text-center shadow-[0_2px_5px_rgba(15,17,17,0.06)]">
-          <h1 className="text-xl font-normal text-[#0f1111]">Your cart is empty</h1>
+          <h1 className="text-xl font-normal text-[#0f1111]">
+            Your cart is empty
+          </h1>
           <p className="mt-2 text-sm text-[#565959]">
             Add items before checking out.
           </p>
@@ -87,7 +104,10 @@ export default function CheckoutPage() {
   return (
     <div className="amz-container py-4 md:py-6">
       <nav className="mb-4 text-sm text-[#565959]">
-        <Link href="/cart" className="text-[#007185] hover:text-[#c7511f] hover:underline">
+        <Link
+          href="/cart"
+          className="text-[#007185] hover:text-[#c7511f] hover:underline"
+        >
           Cart
         </Link>
         <span className="mx-2">›</span>

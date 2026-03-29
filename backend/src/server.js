@@ -1,12 +1,7 @@
-import dotenv from 'dotenv';
-
+import dotenv from "dotenv";
 dotenv.config();
 
-import authRoutes from './routes/authRoutes.js';
-
-app.use('/auth', authRoutes);
-
-import app from './app.js';
+import app from "./app.js"; // ✅ IMPORTANT: import app first
 
 const port = Number(process.env.PORT) || 3001;
 

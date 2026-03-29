@@ -16,6 +16,7 @@ import {
   getCart,
   postCartItem,
 } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext"; // ✅ ADDED
 
 export type AddProductOptions = {
   /** true = add to existing qty (default). false = set line qty (e.g. Buy Now). */
@@ -30,7 +31,6 @@ type CartContextValue = {
   syncing: boolean;
   clearSyncError: () => void;
   refresh: () => Promise<void>;
-  /** Replace quantity for a product, or pass 0 / negative to remove the line. */
   setQuantity: (productId: number, quantity: number) => Promise<void>;
   addProduct: (
     productId: number,
@@ -54,19 +54,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [syncError, setSyncError] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
 
+  const { user } = useAuth(); // ✅ ADDED
+
   const clearSyncError = useCallback(() => setSyncError(null), []);
 
   const refresh = useCallback(async () => {
     setError(null);
     try {
-      const data = await getCart(DEFAULT_USER_ID);
+      // ✅ FIXED: use real logged-in user
+      const data = await getCart(user?.id ?? DEFAULT_USER_ID);
       setCart(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load cart");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [user]); // ✅ dependency added
 
   useEffect(() => {
     void refresh();
@@ -97,7 +100,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setSyncError(null);
       setSyncing(true);
       try {
-        await postCartItem({ productId, quantity, merge });
+        await postCartItem({
+          userId: user?.id ?? DEFAULT_USER_ID, // ✅ FIXED
+          productId,
+          quantity,
+          merge,
+        });
         await refresh();
       } catch (e) {
         setSyncError(syncMessage(e));
@@ -106,7 +114,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setSyncing(false);
       }
     },
-    [refresh]
+    [refresh, user] // ✅ added
   );
 
   const setQuantity = useCallback(
@@ -115,15 +123,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setSyncing(true);
       try {
         if (quantity < 1) {
-          // Find the cart line in current cart and delete it
           const line = cart?.items.find((i) => i.productId === productId);
           if (line) {
-            await deleteCartItem(line.cartId, DEFAULT_USER_ID);
+            await deleteCartItem(
+              line.cartId,
+              user?.id ?? DEFAULT_USER_ID // ✅ FIXED
+            );
             await refresh();
           }
           return;
         }
-        await postCartItem({ productId, quantity, merge: false });
+        await postCartItem({
+          userId: user?.id ?? DEFAULT_USER_ID, // ✅ FIXED
+          productId,
+          quantity,
+          merge: false,
+        });
         await refresh();
       } catch (e) {
         setSyncError(syncMessage(e));
@@ -132,7 +147,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setSyncing(false);
       }
     },
-    [cart, refresh]
+    [cart, refresh, user] // ✅ added
   );
 
   const removeLine = useCallback(
@@ -140,7 +155,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setSyncError(null);
       setSyncing(true);
       try {
-        await deleteCartItem(cartId);
+        await deleteCartItem(
+          cartId,
+          user?.id ?? DEFAULT_USER_ID // ✅ FIXED
+        );
         await refresh();
       } catch (e) {
         setSyncError(syncMessage(e));
@@ -149,7 +167,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setSyncing(false);
       }
     },
-    [refresh]
+    [refresh, user] // ✅ added
   );
 
   const itemCount = useMemo(

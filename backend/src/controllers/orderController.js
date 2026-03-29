@@ -2,9 +2,19 @@ import * as cartModel from '../models/cartModel.js';
 import * as orderModel from '../models/orderModel.js';
 import * as userModel from '../models/userModel.js';
 
+// ✅ ADDED (NEW)
+import { sendOrderEmail } from '../utils/sendEmail.js';
+
 export async function createOrder(req, res, next) {
   try {
-    const rawUserId = req.body?.userId ?? 1;
+    const rawUserId = req.body?.userId;
+
+    if (!rawUserId) {
+      const err = new Error('User ID is required');
+      err.statusCode = 400;
+      return next(err);
+    }
+
     const userId = Number(rawUserId);
     if (!Number.isInteger(userId) || userId < 1) {
       const err = new Error('Invalid userId');
@@ -19,7 +29,15 @@ export async function createOrder(req, res, next) {
       return next(err);
     }
 
-    const required = ['fullName', 'line1', 'city', 'state', 'postalCode', 'country'];
+    const required = [
+      'fullName',
+      'line1',
+      'city',
+      'state',
+      'postalCode',
+      'country',
+    ];
+
     for (const key of required) {
       const value = shipping[key];
       if (!value || String(value).trim() === '') {
@@ -29,25 +47,31 @@ export async function createOrder(req, res, next) {
       }
     }
 
-    // Validate string lengths
     if (String(shipping.fullName).length > 255) {
       const err = new Error('Full name is too long');
       err.statusCode = 400;
       return next(err);
     }
+
     if (shipping.phone && String(shipping.phone).length > 32) {
       const err = new Error('Phone number is too long');
       err.statusCode = 400;
       return next(err);
     }
 
+    // ✅ Check user exists
     const user = await userModel.findUserById(userId);
+
+    // 🔥 DEBUG (VERY IMPORTANT)
+    console.log("USER DATA:", user);
+
     if (!user) {
       const err = new Error('User not found');
       err.statusCode = 404;
       return next(err);
     }
 
+    // ✅ Get cart
     const cartRows = await cartModel.findCartByUserId(userId);
     if (cartRows.length === 0) {
       const err = new Error('Cart is empty');
@@ -89,6 +113,18 @@ export async function createOrder(req, res, next) {
       lineItems,
       total
     );
+
+    // ✅ EMAIL FIX (SAFE)
+    try {
+      if (!user.email) {
+        console.error("❌ Email missing in user object");
+      } else {
+        await sendOrderEmail(user.email, order, lineItems);
+        console.log("✅ Order email sent");
+      }
+    } catch (emailErr) {
+      console.error("❌ Email failed:", emailErr.message);
+    }
 
     await cartModel.clearCartForUser(userId);
 

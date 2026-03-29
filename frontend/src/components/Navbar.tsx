@@ -211,40 +211,75 @@ function NavbarContent() {
 
       {/* SIDEBAR */}
       {openMenu && (
-        <div 
-          className="fixed inset-0 bg-black/70 z-[100] transition-opacity"
-          onClick={() => setOpenMenu(false)}
-        >
-          <div
-            className="w-[300px] md:w-[350px] bg-white h-full relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="bg-[#232f3e] text-white p-4 flex items-center gap-2">
-              <div className="h-8 w-8 bg-gray-300 rounded-full" />
-              <span className="font-bold text-lg">Hello, {user ? user.name : 'sign in'}</span>
-            </div>
+  <div 
+    className="fixed inset-0 bg-black/70 z-[100] transition-opacity"
+    onClick={() => setOpenMenu(false)}
+  >
+    <div
+      className="w-[85%] sm:w-[320px] bg-white h-full relative"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* HEADER */}
+      <div className="bg-[#232f3e] text-white p-4 flex items-center gap-3">
+        <div className="h-8 w-8 bg-gray-300 rounded-full" />
+        <span className="font-bold text-lg">
+          Hello, {user ? user.name : "sign in"}
+        </span>
+      </div>
 
-            <div className="py-4 text-black overflow-y-auto h-[calc(100%-64px)]">
-              <h3 className="px-6 py-2 font-bold text-lg">Trending</h3>
-              <p className="px-6 py-3 hover:bg-gray-100 cursor-pointer">Best Sellers</p>
-              <p className="px-6 py-3 hover:bg-gray-100 cursor-pointer border-b">New Releases</p>
-              
-              <h3 className="px-6 py-2 font-bold text-lg mt-2">Shop By Category</h3>
-              <p className="px-6 py-3 hover:bg-gray-100 cursor-pointer">Electronics</p>
-              <p className="px-6 py-3 hover:bg-gray-100 cursor-pointer">Fashion</p>
-              <p className="px-6 py-3 hover:bg-gray-100 cursor-pointer">Mobiles</p>
-              
-              <button 
-                onClick={() => setOpenMenu(false)}
-                className="absolute top-4 -right-12 text-white text-4xl"
-              >
-                &times;
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+      {/* CONTENT */}
+      <div className="py-4 text-black overflow-y-auto h-[calc(100%-64px)]">
+
+        {/* TRENDING */}
+        <h3 className="px-6 py-2 font-bold text-lg">Trending</h3>
+
+        <Link href="/products?q=best" onClick={() => setOpenMenu(false)}>
+          <p className="px-6 py-3 hover:bg-gray-100 cursor-pointer active:scale-95 transition">
+            Best Sellers
+          </p>
+        </Link>
+
+        <Link href="/products?q=new" onClick={() => setOpenMenu(false)}>
+          <p className="px-6 py-3 hover:bg-gray-100 cursor-pointer border-b active:scale-95 transition">
+            New Releases
+          </p>
+        </Link>
+
+        {/* CATEGORY */}
+        <h3 className="px-6 py-2 font-bold text-lg mt-2">
+          Shop By Category
+        </h3>
+
+        <Link href="/products?category=electronics" onClick={() => setOpenMenu(false)}>
+          <p className="px-6 py-3 hover:bg-gray-100 cursor-pointer active:scale-95 transition">
+            Electronics
+          </p>
+        </Link>
+
+        <Link href="/products?category=fashion" onClick={() => setOpenMenu(false)}>
+          <p className="px-6 py-3 hover:bg-gray-100 cursor-pointer active:scale-95 transition">
+            Fashion
+          </p>
+        </Link>
+
+        <Link href="/products?category=mobiles" onClick={() => setOpenMenu(false)}>
+          <p className="px-6 py-3 hover:bg-gray-100 cursor-pointer active:scale-95 transition">
+            Mobiles
+          </p>
+        </Link>
+
+        {/* CLOSE BUTTON */}
+        <button 
+          onClick={() => setOpenMenu(false)}
+          className="absolute top-4 -right-12 text-white text-4xl"
+        >
+          &times;
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+</>
   );
 }
 

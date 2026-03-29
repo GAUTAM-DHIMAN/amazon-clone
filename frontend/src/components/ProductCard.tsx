@@ -6,6 +6,7 @@ import { memo } from "react";
 import type { Product } from "@/lib/api";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { formatPriceParts } from "@/lib/formatCurrency";
+import { WishlistButton } from "@/components/WishlistButton";
 
 type Props = {
   product: Product;
@@ -15,8 +16,18 @@ const ProductCard = memo(function ProductCard({ product }: Props) {
   const { main, fraction } = formatPriceParts(product.price);
   const inStock = product.stock > 0;
 
+  // ✅ FIX: safe image fallback
+  const imageSrc =
+    product.imageUrl && product.imageUrl.trim() !== ""
+      ? product.imageUrl
+      : "/placeholder.png";
+
   return (
     <article className="flex flex-col h-full w-full bg-white p-3 sm:p-4 md:p-5 border border-[#e7e7e7] rounded-md hover:shadow-md transition">
+
+      <div className="flex justify-end">
+        <WishlistButton productId={product.id} />
+      </div>
 
       {/* Image */}
       <Link
@@ -24,8 +35,8 @@ const ProductCard = memo(function ProductCard({ product }: Props) {
         className="relative mb-3 block w-full h-[180px] sm:h-[200px] overflow-hidden bg-white flex items-center justify-center sm:mb-4"
       >
         <Image
-          src={product.imageUrl}
-          alt={product.name}
+          src={imageSrc} // ✅ FIXED HERE
+          alt={product.name || "Product"}
           fill
           sizes="(max-width: 400px) 42vw, (max-width: 640px) 45vw, (max-width: 1024px) 28vw, 18vw"
           className="object-contain mix-blend-multiply hover:scale-105 transition"
@@ -93,7 +104,6 @@ const ProductCard = memo(function ProductCard({ product }: Props) {
               See details
             </Link>
 
-            {/* Compare */}
             <button
               className="text-xs text-blue-600 hover:underline"
               onClick={(e) => {

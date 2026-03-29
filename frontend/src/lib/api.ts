@@ -2,10 +2,10 @@ import { DEFAULT_USER_ID } from "./constants";
 
 // ✅ FIX: safer baseUrl (prevents SSR + fetch issues)
 const baseUrl =
-  typeof window !== "undefined"
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
+  (typeof window !== "undefined"
     ? "http://localhost:3001"
-    : process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
-      "http://localhost:3001";
+    : "http://127.0.0.1:3001"); // ✅ FIXED
 
 export type Product = {
   id: number;
@@ -111,6 +111,11 @@ export async function getProduct(id: number): Promise<Product> {
 // ================= CART =================
 
 export async function getCart(userId = DEFAULT_USER_ID): Promise<CartResponse> {
+  // ✅ FIX: enforce real user
+  if (!userId || userId === DEFAULT_USER_ID) {
+    throw new Error("User not authenticated");
+  }
+
   const res = await fetch(
     `${baseUrl}/cart?userId=${encodeURIComponent(String(userId))}`,
     { cache: "no-store" }
@@ -132,8 +137,14 @@ export async function postCartItem(input: {
   quantity: number;
   merge?: boolean;
 }): Promise<PostCartItemResult> {
+
+  // ✅ FIX
+  if (!input.userId || input.userId === DEFAULT_USER_ID) {
+    throw new Error("User not authenticated");
+  }
+
   const body: Record<string, unknown> = {
-    userId: input.userId ?? DEFAULT_USER_ID,
+    userId: input.userId,
     productId: input.productId,
     quantity: input.quantity,
   };
@@ -155,6 +166,12 @@ export async function deleteCartItem(
   cartId: number,
   userId = DEFAULT_USER_ID
 ): Promise<void> {
+
+  // ✅ FIX
+  if (!userId || userId === DEFAULT_USER_ID) {
+    throw new Error("User not authenticated");
+  }
+
   const res = await fetch(
     `${baseUrl}/cart/${cartId}?userId=${encodeURIComponent(String(userId))}`,
     { method: "DELETE" }
@@ -182,11 +199,17 @@ export async function postOrder(input: {
   userId?: number;
   shipping: ShippingPayload;
 }): Promise<{ orderId: number; total: number; createdAt: string }> {
+
+  // ✅ FIX
+  if (!input.userId || input.userId === DEFAULT_USER_ID) {
+    throw new Error("User not authenticated");
+  }
+
   const res = await fetch(`${baseUrl}/orders`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      userId: input.userId ?? DEFAULT_USER_ID,
+      userId: input.userId, // ✅ FORCE REAL USER
       shipping: input.shipping,
     }),
   });
@@ -206,7 +229,6 @@ export type AuthResponse = {
   };
 };
 
-// ✅ FIX: login stable call
 export async function login(input: {
   email: string;
   password: string;
@@ -220,7 +242,6 @@ export async function login(input: {
   return handleJson<AuthResponse>(res);
 }
 
-// ✅ FIX: signup stable call
 export async function signup(input: {
   name: string;
   email: string;
@@ -235,10 +256,35 @@ export async function signup(input: {
   return handleJson<AuthResponse>(res);
 }
 
+// ================= EXTRA =================
+
 export async function getSimilarProducts(category: string): Promise<Product[]> {
   const res = await fetch(
     `${baseUrl}/products?category=${encodeURIComponent(category)}`,
     { cache: "no-store" }
   );
   return handleJson<Product[]>(res);
+}
+
+export async function getWishlist(userId: number) {
+  const res = await fetch(`${baseUrl}/wishlist/${userId}`);
+  return handleJson(res);
+}
+
+export async function addWishlist(userId: number, productId: number) {
+  const res = await fetch(`${baseUrl}/wishlist`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, productId }),
+  });
+  return handleJson(res);
+}
+
+export async function removeWishlist(userId: number, productId: number) {
+  const res = await fetch(`${baseUrl}/wishlist`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, productId }),
+  });
+  return handleJson(res);
 }
