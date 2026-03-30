@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 
 type Props = {
@@ -18,10 +20,16 @@ export function AddToCartButton({
   className,
   children,
 }: Props) {
+  const router = useRouter();
+  const { user } = useAuth();
   const { addProduct } = useCart();
   const [pending, setPending] = useState(false);
 
   const onClick = async () => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
     setPending(true);
     try {
       await addProduct(productId, quantity, { merge: true });

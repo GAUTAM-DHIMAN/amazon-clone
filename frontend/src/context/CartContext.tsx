@@ -61,15 +61,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const refresh = useCallback(async () => {
     setError(null);
     try {
-      // ✅ FIXED: use real logged-in user
-      const data = await getCart(user?.id ?? DEFAULT_USER_ID);
+      if (!user) {
+        setCart({ id: 0, user_id: 0, items: [], subtotal: 0, total: 0 } as any);
+        return;
+      }
+      const data = await getCart(user.id);
       setCart(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load cart");
     } finally {
       setLoading(false);
     }
-  }, [user]); // ✅ dependency added
+  }, [user]);
 
   useEffect(() => {
     void refresh();

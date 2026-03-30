@@ -8,7 +8,7 @@ export function PromoBanner() {
         <div className="relative z-10 text-white">
           <h3 className="text-xl sm:text-2xl font-bold italic underline">Today&apos;s Deals</h3>
           <p className="text-sm mt-1 text-white/90">Savings across all categories</p>
-          <Link href="/" className="promo-btn mt-3 inline-block">
+          <Link href="/?q=deals" className="promo-btn mt-3 inline-block">
             Shop now ›
           </Link>
         </div>
@@ -19,7 +19,7 @@ export function PromoBanner() {
         <div className="relative z-10 text-white">
           <h3 className="text-xl sm:text-2xl font-bold text-[#ffa41c]">Prime Exclusive</h3>
           <p className="text-sm mt-1 text-white/90">Free fast delivery on millions of items</p>
-          <Link href="/" className="promo-btn mt-3 inline-block">
+          <Link href="/?q=prime" className="promo-btn mt-3 inline-block">
             Shop now ›
           </Link>
         </div>

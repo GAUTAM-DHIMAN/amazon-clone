@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import { formatPriceParts } from "@/lib/formatCurrency";
 import type { Product } from "@/lib/api";
 
@@ -13,6 +14,7 @@ type Props = {
 
 export function ProductBuyBox({ product }: Props) {
   const router = useRouter();
+  const { user } = useAuth();
   const { addProduct } = useCart();
   const [qty, setQty] = useState(1);
   const [buyPending, setBuyPending] = useState(false);
@@ -26,6 +28,10 @@ export function ProductBuyBox({ product }: Props) {
     Math.max(1, Math.min(max || 1, Math.floor(n)));
 
   const buyNow = async () => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
     setBuyPending(true);
     try {
       await addProduct(product.id, qty, { merge: false });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 
 const slides = [
   {
@@ -8,6 +9,7 @@ const slides = [
     title: "India's Fashion Destination",
     subtitle: "Clothing, footwear & accessories for everyone",
     cta: "Explore Fashion",
+    ctaHref: "/?category=fashion",
     accent: "#febd69",
   },
   {
@@ -15,6 +17,7 @@ const slides = [
     title: "Electronics Mega Sale",
     subtitle: "Up to 50% off on smartphones, laptops & more",
     cta: "Shop Now",
+    ctaHref: "/?category=electronics",
     accent: "#ffd814",
   },
   {
@@ -22,6 +25,7 @@ const slides = [
     title: "Home & Kitchen Essentials",
     subtitle: "Starting ₹199 — cookware, decor & appliances",
     cta: "Discover Deals",
+    ctaHref: "/?category=home-kitchen",
     accent: "#ff9900",
   },
   {
@@ -29,6 +33,7 @@ const slides = [
     title: "Beauty & Personal Care",
     subtitle: "Top brands at unbeatable prices",
     cta: "Shop Beauty",
+    ctaHref: "/?category=beauty",
     accent: "#ffa41c",
   },
 ];
@@ -71,12 +76,13 @@ export function HeroCarousel() {
               <p className="text-base sm:text-lg md:text-xl text-white/80 mb-6 max-w-lg">
                 {slide.subtitle}
               </p>
-              <button
-                className="px-6 py-2.5 rounded-sm text-sm font-bold shadow-lg hover:opacity-90"
+              <Link
+                href={slide.ctaHref}
+                className="inline-block px-6 py-2.5 rounded-sm text-sm font-bold shadow-lg hover:opacity-90"
                 style={{ backgroundColor: slide.accent, color: "#0f1111" }}
               >
                 {slide.cta} ›
-              </button>
+              </Link>
             </div>
           </div>
         </div>

@@ -204,12 +204,12 @@ function NavbarContent() {
             <HamburgerIcon className="h-5 w-5" />
             <span className="font-bold">All</span>
           </div>
-          <Link href="/" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0">Fresh</Link>
-          <Link href="/" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0">Bestsellers</Link>
-          <Link href="/" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0">Mobiles</Link>
-          <Link href="/" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0">Today&apos;s Deals</Link>
-          <Link href="/" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0 hidden md:block">Customer Service</Link>
-          <Link href="/" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0 hidden lg:block">Prime</Link>
+          <Link href="/?q=fresh" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0">Fresh</Link>
+          <Link href="/?q=bestsellers" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0">Bestsellers</Link>
+          <Link href="/?category=mobiles" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0">Mobiles</Link>
+          <Link href="/?q=deals" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0">Today&apos;s Deals</Link>
+          <Link href="/?q=customer-service" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0 hidden md:block">Customer Service</Link>
+          <Link href="/?q=prime" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0 hidden lg:block">Prime</Link>
           <Link href="/cart" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0 hidden md:block">Cart</Link>
         </div>
       </header>
@@ -275,13 +275,13 @@ function NavbarContent() {
                 Trending
               </h3>
 
-              <Link href="/" onClick={() => setOpenMenu(false)}>
+              <Link href="/?q=bestsellers" onClick={() => setOpenMenu(false)}>
                 <p className="px-6 py-3 hover:bg-[#f0f2f2] cursor-pointer transition-colors">
                   Best Sellers
                 </p>
               </Link>
 
-              <Link href="/" onClick={() => setOpenMenu(false)}>
+              <Link href="/?q=new-releases" onClick={() => setOpenMenu(false)}>
                 <p className="px-6 py-3 hover:bg-[#f0f2f2] cursor-pointer border-b border-[#e7e7e7] transition-colors">
                   New Releases
                 </p>
