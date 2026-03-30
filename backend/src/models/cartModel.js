@@ -7,7 +7,7 @@ export async function findCartByUserId(userId) {
             p.id AS "productId",
             p.name,
             p.price,
-            p.image AS "imageUrl",
+            p.image_url AS "imageUrl",
             p.stock
      FROM cart c
      INNER JOIN products p ON p.id = c.product_id
