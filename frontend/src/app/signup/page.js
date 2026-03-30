@@ -40,8 +40,9 @@ export default function SignupPage() {
       );
 
       if (result?.status === "success") {
-        router.push("/");
-        router.refresh();
+        const params = new URLSearchParams(window.location.search);
+        const redirectUrl = params.get("redirect") || "/";
+        window.location.href = redirectUrl;
       } else {
         setError(result?.message || "Registration failed. Try again.");
       }

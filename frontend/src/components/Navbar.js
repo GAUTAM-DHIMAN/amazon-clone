@@ -22,8 +22,6 @@ function NavbarContent() {
   const { user, logout } = useAuth();
 
   const [q, setQ] = useState("");
-  const [show, setShow] = useState(true);
-  const [lastScroll, setLastScroll] = useState(0);
 
   const [showAccount, setShowAccount] = useState(false);
   const [showLocation, setShowLocation] = useState(false);
@@ -46,28 +44,9 @@ function NavbarContent() {
     );
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScroll = window.scrollY;
-      if (currentScroll > lastScroll && currentScroll > 80) {
-        setShow(false);
-      } else {
-        setShow(true);
-      }
-      setLastScroll(currentScroll);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScroll]);
-
   return (
     <>
-      <header
-        className={`fixed top-0 left-0 z-50 w-full max-w-[100vw] text-white transition-transform duration-300 ${
-          show ? "translate-y-0" : "-translate-y-full"
-        }`}
-      >
+      <header className="fixed top-0 left-0 z-50 w-full max-w-[100vw] text-white">
         {/* MAIN NAVBAR */}
         <div className="min-h-[52px] bg-[#131921] sm:min-h-[60px] flex items-center">
           <div className="container mx-auto flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-0">

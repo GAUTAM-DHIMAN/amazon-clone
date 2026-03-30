@@ -43,10 +43,21 @@ export default async function Home({ searchParams }) {
   const { q, category: categoryParam } = await searchParams;
   const category = categoryParam?.trim().toLowerCase() || undefined;
 
-  const [products, categories] = await Promise.all([
-    getProducts({ q, category }),
-    getProductCategories(),
-  ]);
+  let products = [];
+  let categories = [];
+  let apiError = false;
+
+  try {
+    const results = await Promise.all([
+      getProducts({ q, category }),
+      getProductCategories(),
+    ]);
+    products = results[0] || [];
+    categories = results[1] || [];
+  } catch (error) {
+    console.error("SSR Fetch failed on render. Backend might be asleep or starting up:", error);
+    apiError = true;
+  }
 
   const activeCategoryLabel =
     category && categories.find((c) => c.slug === category)?.label;
@@ -62,6 +73,15 @@ export default async function Home({ searchParams }) {
       {!isFiltered && <HeroCarousel />}
 
       <div className="amz-container py-4 sm:py-5 md:py-6">
+        {apiError && (
+          <div className="mb-4 rounded-md bg-red-50 p-4 border border-red-200">
+            <h3 className="text-sm font-medium text-red-800">Connection Error</h3>
+            <p className="mt-2 text-sm text-red-700">
+              The backend API is currently asleep or unreachable. Render free-tier instances may take up to 60 seconds to spin up. Please refresh the page in a moment.
+            </p>
+          </div>
+        )}
+
         <ProductCategoryBar
           categories={categories}
           currentQ={q}

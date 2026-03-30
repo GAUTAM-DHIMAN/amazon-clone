@@ -19,7 +19,11 @@ export function AddToCartButton({
 
   const onClick = async () => {
     if (!user) {
-      router.push("/login");
+      router.push(
+        `/login?redirect=${encodeURIComponent(
+          window.location.pathname + window.location.search
+        )}`
+      );
       return;
     }
     setPending(true);

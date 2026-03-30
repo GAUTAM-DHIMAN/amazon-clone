@@ -22,8 +22,9 @@ export default function LoginPage() {
     try {
       const result = await login(email, password);
       if (result?.success) {
-        router.push("/");
-        router.refresh();
+        const params = new URLSearchParams(window.location.search);
+        const redirectUrl = params.get("redirect") || "/";
+        window.location.href = redirectUrl;
       } else {
         setError(result?.message || "Invalid email or password.");
       }

@@ -25,7 +25,11 @@ export function ProductBuyBox({ product }) {
 
   const buyNow = async () => {
     if (!user) {
-      router.push("/login");
+      router.push(
+        `/login?redirect=${encodeURIComponent(
+          window.location.pathname + window.location.search
+        )}`
+      );
       return;
     }
     setBuyPending(true);
