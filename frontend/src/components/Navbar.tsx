@@ -70,25 +70,26 @@ function NavbarContent() {
       >
         {/* MAIN NAVBAR */}
         <div className="min-h-[52px] bg-[#131921] sm:min-h-[60px] flex items-center">
-          <div className="container mx-auto flex items-center gap-2 px-4 py-2 sm:py-0">
-            
+          <div className="container mx-auto flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-0">
+
             {/* LOGO */}
-            <Link href="/" className="flex items-center px-2 hover:outline outline-1 outline-white">
-              <span className="text-[22px] font-medium whitespace-nowrap">
+            <Link href="/" className="flex items-center px-2 py-1 hover:outline outline-1 outline-white rounded-sm shrink-0">
+              <span className="text-[20px] sm:text-[22px] font-medium whitespace-nowrap">
                 <span className="text-white font-bold">amazon</span>
                 <span className="text-[#febd69]">clone</span>
               </span>
+              <span className="text-[10px] text-white/60 ml-0.5">.in</span>
             </Link>
 
             {/* LOCATION */}
             <div
               onClick={() => setShowLocation(true)}
-              className="hidden md:block cursor-pointer px-2 py-1 hover:outline outline-1 outline-white"
+              className="hidden md:flex cursor-pointer items-end px-2 py-1.5 hover:outline outline-1 outline-white rounded-sm"
             >
-              <div className="text-[11px] text-[#ccc] leading-tight">Deliver to</div>
-              <div className="text-sm font-bold flex items-center">
-                <LocationIcon className="h-4 w-4 mr-0.5" />
-                Cloningburg
+              <LocationIcon className="h-5 w-5 mr-0.5 self-end text-white" />
+              <div>
+                <div className="text-[11px] text-[#ccc] leading-tight">Deliver to</div>
+                <div className="text-sm font-bold leading-tight">India</div>
               </div>
             </div>
 
@@ -97,48 +98,70 @@ function NavbarContent() {
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                className="w-full px-3 py-2 text-black rounded-l-md focus:outline-none"
+                className="w-full px-3 py-2 text-[#0f1111] text-sm rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#e77600] bg-white"
                 placeholder="Search Amazon Clone"
               />
-              <button type="submit" className="bg-[#febd69] hover:bg-[#f3a847] px-4 flex items-center justify-center rounded-r-md">
-                <SearchIcon className="h-6 w-6 text-[#333]" />
+              <button
+                type="submit"
+                className="bg-[#febd69] hover:bg-[#f3a847] active:bg-[#eeba37] px-4 flex items-center justify-center rounded-r-md"
+              >
+                <SearchIcon className="h-5 w-5 text-[#333]" />
               </button>
             </form>
 
             {/* ACCOUNT */}
             <div
-              className="relative hidden sm:block cursor-pointer px-2 py-1 hover:outline outline-1 outline-white"
+              className="relative hidden sm:block cursor-pointer px-2 py-1 hover:outline outline-1 outline-white rounded-sm"
               onMouseEnter={() => setShowAccount(true)}
               onMouseLeave={() => setShowAccount(false)}
             >
-              <div className="text-[11px] leading-tight">
-                Hello, {user ? user.name : "sign in"}
+              <div className="text-[11px] leading-tight text-[#ccc]">
+                Hello, {user ? user.name.split(" ")[0] : "sign in"}
               </div>
-              <div className="text-sm font-bold flex items-center">
+              <div className="text-sm font-bold flex items-center leading-tight">
                 Account & Lists
+                <svg className="w-3 h-3 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
               </div>
 
               {showAccount && (
-                <div className="absolute right-0 top-full pt-2 w-[200px] z-50">
-                  <div className="bg-white text-black shadow-xl rounded-sm p-4 border border-gray-200">
+                <div className="absolute right-0 top-full pt-2 w-[220px] z-50">
+                  <div className="bg-white text-[#0f1111] shadow-xl rounded-lg p-4 border border-[#d5d9d9]">
                     {!user ? (
                       <>
-                        <Link href="/login" className="block w-full bg-[#ffd814] hover:bg-[#f7ca00] py-1.5 rounded-md text-sm border border-[#fcd200] text-center">
+                        <Link
+                          href="/login"
+                          className="block w-full bg-[#ffd814] hover:bg-[#f7ca00] py-2 rounded-lg text-sm border border-[#fcd200] text-center font-medium"
+                        >
                           Sign in
                         </Link>
-                        <p className="text-[11px] mt-2 text-center">
+                        <p className="text-[11px] mt-2 text-center text-[#565959]">
                           New customer?{" "}
-                          <Link href="/signup" className="text-blue-600 hover:text-orange-600 hover:underline cursor-pointer">
+                          <Link
+                            href="/signup"
+                            className="text-[#007185] hover:text-[#c7511f] hover:underline cursor-pointer"
+                          >
                             Start here.
                           </Link>
                         </p>
                       </>
                     ) : (
-                      <div className="flex flex-col gap-2 text-sm">
-                        <p className="font-bold border-b pb-1">Your Account</p>
-                        <Link href="/orders" className="text-left hover:underline">Orders</Link>
-                        <Link href="/wishlist" className="text-left hover:underline">Wishlist</Link>
-                        <button onClick={logout} className="text-left text-red-600 hover:underline mt-1 font-semibold">Logout</button>
+                      <div className="flex flex-col gap-1 text-sm">
+                        <p className="font-bold border-b border-[#e7e7e7] pb-2 mb-1">Your Account</p>
+                        <Link href="/orders" className="py-1.5 hover:text-[#c7511f] hover:underline">
+                          📦 Your Orders
+                        </Link>
+                        <Link href="/wishlist" className="py-1.5 hover:text-[#c7511f] hover:underline">
+                          ❤️ Wishlist
+                        </Link>
+                        <Link href="/cart" className="py-1.5 hover:text-[#c7511f] hover:underline">
+                          🛒 Your Cart
+                        </Link>
+                        <button
+                          onClick={logout}
+                          className="text-left text-[#cc0c39] hover:underline mt-2 pt-2 border-t border-[#e7e7e7] font-medium"
+                        >
+                          Sign Out
+                        </button>
                       </div>
                     )}
                   </div>
@@ -146,140 +169,153 @@ function NavbarContent() {
               )}
             </div>
 
-            {/* CART ICON */}
+            {/* ORDERS */}
+            <Link
+              href="/orders"
+              className="hidden md:block cursor-pointer px-2 py-1 hover:outline outline-1 outline-white rounded-sm"
+            >
+              <div className="text-[11px] leading-tight text-[#ccc]">Returns</div>
+              <div className="text-sm font-bold leading-tight">& Orders</div>
+            </Link>
+
+            {/* CART */}
             <Link
               href="/cart"
-              className="cursor-pointer flex items-end px-2 py-1 hover:outline outline-1 outline-white relative"
+              className="cursor-pointer flex items-end px-2 py-1 hover:outline outline-1 outline-white rounded-sm relative"
             >
               <div className="relative">
-                <span className="absolute -top-1 left-1/2 -translate-x-1/2 text-orange-500 font-bold text-base">
+                <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[#ffa41c] font-bold text-base leading-none">
                   {itemCount}
                 </span>
                 <CartIcon className="h-8 w-10" />
               </div>
-              <span className="font-bold text-sm hidden sm:block">Cart</span>
+              <span className="font-bold text-sm hidden sm:block -mb-0.5">Cart</span>
             </Link>
 
           </div>
         </div>
 
         {/* SUB NAV */}
-        <div className="bg-[#232f3e] px-4 py-1 flex items-center gap-4 text-sm font-medium">
-          <div 
-            onClick={() => setOpenMenu(true)} 
-            className="cursor-pointer flex items-center gap-1 hover:outline outline-1 outline-white px-2 py-1"
+        <div className="bg-[#232f3e] px-3 sm:px-4 py-0.5 flex items-center gap-0 text-sm overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div
+            onClick={() => setOpenMenu(true)}
+            className="cursor-pointer flex items-center gap-1 hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm shrink-0"
           >
             <HamburgerIcon className="h-5 w-5" />
             <span className="font-bold">All</span>
           </div>
-          <Link href="/" className="hover:outline outline-1 outline-white px-2 py-1">Today's Deals</Link>
-          <Link href="/cart" className="hover:outline outline-1 outline-white px-2 py-1">Cart</Link>
-          <Link href="/" className="hover:outline outline-1 outline-white px-2 py-1 hidden md:block">Customer Service</Link>
+          <Link href="/" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0">Fresh</Link>
+          <Link href="/" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0">Bestsellers</Link>
+          <Link href="/" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0">Mobiles</Link>
+          <Link href="/" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0">Today&apos;s Deals</Link>
+          <Link href="/" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0 hidden md:block">Customer Service</Link>
+          <Link href="/" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0 hidden lg:block">Prime</Link>
+          <Link href="/cart" className="hover:outline outline-1 outline-white px-2 py-1.5 rounded-sm whitespace-nowrap shrink-0 hidden md:block">Cart</Link>
         </div>
       </header>
 
       {/* LOCATION MODAL */}
       {showLocation && (
         <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-[100]">
-          <div className="bg-white rounded-lg w-[375px] overflow-hidden">
-             <div className="bg-[#f3f3f3] px-6 py-4 border-b flex justify-between items-center text-black">
-                <h2 className="font-bold text-lg">Choose your location</h2>
-                <button onClick={() => setShowLocation(false)} className="text-2xl">&times;</button>
-             </div>
-             <div className="p-6 text-black">
-                {!user ? (
-                  <Link 
-                    href="/login" 
-                    onClick={() => setShowLocation(false)}
-                    className="block w-full bg-[#ffd814] shadow-sm py-2 rounded-md font-medium mb-4 text-center"
-                  >
-                    Sign in to see your addresses
-                  </Link>
-                ) : (
-                  <p className="text-sm mb-4">Select a delivery location to see product availability and delivery options</p>
-                )}
-                <button 
+          <div className="bg-white rounded-lg w-[375px] overflow-hidden shadow-2xl">
+            <div className="bg-[#f0f2f2] px-6 py-4 border-b flex justify-between items-center text-[#0f1111]">
+              <h2 className="font-bold text-lg">Choose your location</h2>
+              <button onClick={() => setShowLocation(false)} className="text-2xl hover:text-[#cc0c39]">
+                &times;
+              </button>
+            </div>
+            <div className="p-6 text-[#0f1111]">
+              {!user ? (
+                <Link
+                  href="/login"
                   onClick={() => setShowLocation(false)}
-                  className="w-full border border-gray-300 py-1 rounded-md shadow-sm text-sm"
+                  className="block w-full amz-btn-add py-2 text-center mb-4"
                 >
-                  Done
-                </button>
-             </div>
+                  Sign in to see your addresses
+                </Link>
+              ) : (
+                <p className="text-sm mb-4">
+                  Select a delivery location to see product availability and delivery options
+                </p>
+              )}
+              <button
+                onClick={() => setShowLocation(false)}
+                className="amz-btn-secondary w-full py-2"
+              >
+                Done
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       {/* SIDEBAR */}
       {openMenu && (
-  <div 
-    className="fixed inset-0 bg-black/70 z-[100] transition-opacity"
-    onClick={() => setOpenMenu(false)}
-  >
-    <div
-      className="w-[85%] sm:w-[320px] bg-white h-full relative"
-      onClick={(e) => e.stopPropagation()}
-    >
-      {/* HEADER */}
-      <div className="bg-[#232f3e] text-white p-4 flex items-center gap-3">
-        <div className="h-8 w-8 bg-gray-300 rounded-full" />
-        <span className="font-bold text-lg">
-          Hello, {user ? user.name : "sign in"}
-        </span>
-      </div>
-
-      {/* CONTENT */}
-      <div className="py-4 text-black overflow-y-auto h-[calc(100%-64px)]">
-
-        {/* TRENDING */}
-        <h3 className="px-6 py-2 font-bold text-lg">Trending</h3>
-
-        <Link href="/products?q=best" onClick={() => setOpenMenu(false)}>
-          <p className="px-6 py-3 hover:bg-gray-100 cursor-pointer active:scale-95 transition">
-            Best Sellers
-          </p>
-        </Link>
-
-        <Link href="/products?q=new" onClick={() => setOpenMenu(false)}>
-          <p className="px-6 py-3 hover:bg-gray-100 cursor-pointer border-b active:scale-95 transition">
-            New Releases
-          </p>
-        </Link>
-
-        {/* CATEGORY */}
-        <h3 className="px-6 py-2 font-bold text-lg mt-2">
-          Shop By Category
-        </h3>
-
-        <Link href="/products?category=electronics" onClick={() => setOpenMenu(false)}>
-          <p className="px-6 py-3 hover:bg-gray-100 cursor-pointer active:scale-95 transition">
-            Electronics
-          </p>
-        </Link>
-
-        <Link href="/products?category=fashion" onClick={() => setOpenMenu(false)}>
-          <p className="px-6 py-3 hover:bg-gray-100 cursor-pointer active:scale-95 transition">
-            Fashion
-          </p>
-        </Link>
-
-        <Link href="/products?category=mobiles" onClick={() => setOpenMenu(false)}>
-          <p className="px-6 py-3 hover:bg-gray-100 cursor-pointer active:scale-95 transition">
-            Mobiles
-          </p>
-        </Link>
-
-        {/* CLOSE BUTTON */}
-        <button 
+        <div
+          className="fixed inset-0 bg-black/70 z-[100] transition-opacity"
           onClick={() => setOpenMenu(false)}
-          className="absolute top-4 -right-12 text-white text-4xl"
         >
-          &times;
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-</>
+          <div
+            className="w-[85%] sm:w-[320px] bg-white h-full relative overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* HEADER */}
+            <div className="bg-[#232f3e] text-white p-4 flex items-center gap-3">
+              <div className="h-9 w-9 bg-[#f0f2f2] rounded-full flex items-center justify-center text-[#0f1111] font-bold text-sm">
+                {user ? user.name.charAt(0).toUpperCase() : "?"}
+              </div>
+              <span className="font-bold text-lg">
+                Hello, {user ? user.name : "sign in"}
+              </span>
+            </div>
+
+            {/* CONTENT */}
+            <div className="py-2 text-[#0f1111] overflow-y-auto h-[calc(100%-64px)]">
+              <h3 className="px-6 py-2 font-bold text-lg border-b border-[#e7e7e7] mb-1">
+                Trending
+              </h3>
+
+              <Link href="/" onClick={() => setOpenMenu(false)}>
+                <p className="px-6 py-3 hover:bg-[#f0f2f2] cursor-pointer transition-colors">
+                  Best Sellers
+                </p>
+              </Link>
+
+              <Link href="/" onClick={() => setOpenMenu(false)}>
+                <p className="px-6 py-3 hover:bg-[#f0f2f2] cursor-pointer border-b border-[#e7e7e7] transition-colors">
+                  New Releases
+                </p>
+              </Link>
+
+              <h3 className="px-6 py-2 font-bold text-lg mt-1">
+                Shop By Category
+              </h3>
+
+              {["Electronics", "Fashion", "Home & Kitchen", "Books", "Beauty", "Fitness"].map((cat) => (
+                <Link
+                  key={cat}
+                  href={`/?category=${cat.toLowerCase().replace(/ & /g, "-")}`}
+                  onClick={() => setOpenMenu(false)}
+                >
+                  <p className="px-6 py-3 hover:bg-[#f0f2f2] cursor-pointer transition-colors flex items-center justify-between">
+                    {cat}
+                    <svg className="w-4 h-4 text-[#565959]" fill="currentColor" viewBox="0 0 24 24"><path d="M10 6l6 6-6 6z"/></svg>
+                  </p>
+                </Link>
+              ))}
+
+              {/* Close */}
+              <button
+                onClick={() => setOpenMenu(false)}
+                className="absolute top-4 -right-12 text-white text-4xl hover:text-[#febd69]"
+              >
+                &times;
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

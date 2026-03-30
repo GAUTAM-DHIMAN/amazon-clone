@@ -1,25 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import { Suspense } from "react";
 import { CartProvider } from "@/context/CartContext";
 import { CartSyncBanner } from "@/components/CartSyncBanner";
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Amazon Clone",
-  description: "Demo e-commerce storefront built with Next.js",
+  title: "Amazon Clone — Shop Online for Electronics, Fashion & More",
+  description:
+    "Demo e-commerce storefront built with Next.js. Shop electronics, fashion, home & kitchen, beauty and more at great prices.",
 };
 
 export const viewport: Viewport = {
@@ -37,7 +35,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen overflow-x-hidden antialiased`}
+        className={`${inter.variable} min-h-screen overflow-x-hidden antialiased`}
+        style={{ fontFamily: "var(--font-inter), 'Amazon Ember', Arial, sans-serif" }}
       >
         <AuthProvider>
           <CartProvider>
@@ -51,10 +50,11 @@ export default function RootLayout({
 
             <CartSyncBanner />
 
-            {/* 👇 IMPORTANT FIX FOR FIXED NAVBAR */}
-            <main className="min-h-[calc(100vh-5rem)] w-full min-w-0 pb-8 pt-[90px] sm:min-h-[calc(100vh-6rem)] sm:pb-10">
+            <main className="min-h-[calc(100vh-5rem)] w-full min-w-0 pt-[90px] sm:min-h-[calc(100vh-6rem)]">
               {children}
             </main>
+
+            <Footer />
           </CartProvider>
         </AuthProvider>
       </body>

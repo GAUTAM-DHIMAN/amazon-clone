@@ -16,72 +16,96 @@ export function CartItem({
   onQuantityChange,
   onRemove,
 }: CartItemProps) {
-  const qtyOptions = Array.from({ length: line.stock }, (_, i) => i + 1);
+  const max = line.stock;
 
   return (
-    <li className="flex flex-col gap-3 border-b border-[#e7e7e7] bg-white py-4 last:border-b-0 sm:flex-row sm:items-start sm:gap-6 sm:py-5">
+    <li className="flex flex-col gap-3 border-b border-[#e7e7e7] bg-white py-5 last:border-b-0 sm:flex-row sm:items-start sm:gap-6 sm:py-6">
       <Link
         href={`/products/${line.productId}`}
-        className="relative mx-auto h-32 w-32 shrink-0 sm:mx-0 sm:h-28 sm:w-28 md:h-36 md:w-36"
+        className="relative mx-auto h-32 w-32 shrink-0 sm:mx-0 sm:h-32 sm:w-32 md:h-40 md:w-40 rounded-lg overflow-hidden bg-[#f7f7f7]"
       >
         <Image
           src={line.imageUrl}
           alt={line.name}
           fill
-          className="object-contain"
-          sizes="(max-width: 640px) 128px, 144px"
+          className="object-contain p-2"
+          sizes="(max-width: 640px) 128px, 160px"
         />
       </Link>
 
       <div className="min-w-0 flex-1 text-center sm:text-left">
         <Link
           href={`/products/${line.productId}`}
-          className="text-sm font-medium leading-snug text-[#007185] hover:text-[#c7511f] hover:underline sm:text-base md:text-lg"
+          className="text-sm font-medium leading-snug text-[#0f1111] hover:text-[#c7511f] hover:underline sm:text-base md:text-lg"
         >
           {line.name}
         </Link>
-        <p className="mt-1 text-xs text-[#565959] sm:text-sm">
-          {formatCurrency(Number(line.price))} each
-        </p>
 
-        <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:justify-start">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-[#0f1111]">Qty:</span>
-            <select
-              value={line.quantity}
-              onChange={(e) =>
-                onQuantityChange(line.productId, Number(e.target.value))
-              }
-              className="min-h-[44px] rounded-md border border-[#d5d9d9] bg-[#f0f2f2] px-3 py-2 text-base shadow-sm focus:border-[#007185] focus:outline-none focus:ring-1 focus:ring-[#007185] sm:min-h-0 sm:px-2 sm:py-1.5 sm:text-sm"
-              aria-label={`Quantity for ${line.name}`}
+        <p className="mt-1 text-xs text-[#007600] font-medium">In Stock</p>
+
+        {/* Prime badge */}
+        <div className="mt-1 flex items-center justify-center sm:justify-start gap-1">
+          <span className="inline-block bg-[#232f3e] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm tracking-wide">
+            prime
+          </span>
+          <span className="text-[11px] text-[#007185]">FREE Delivery</span>
+        </div>
+
+        {/* Actions */}
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 sm:justify-start">
+          {/* Qty +/- */}
+          <div className="qty-selector">
+            <button
+              type="button"
+              onClick={() => onQuantityChange(line.productId, Math.max(1, line.quantity - 1))}
+              disabled={line.quantity <= 1}
+              className="disabled:opacity-40"
             >
-              {qtyOptions.map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </select>
+              −
+            </button>
+            <span>{line.quantity}</span>
+            <button
+              type="button"
+              onClick={() => onQuantityChange(line.productId, Math.min(max, line.quantity + 1))}
+              disabled={line.quantity >= max}
+              className="disabled:opacity-40"
+            >
+              +
+            </button>
           </div>
-          <span
-            className="hidden h-4 w-px bg-[#d5d9d9] sm:inline"
-            aria-hidden
-          />
+
+          <span className="hidden h-4 w-px bg-[#d5d9d9] sm:inline" aria-hidden />
+
           <button
             type="button"
             onClick={() => onRemove(line.cartId)}
-            className="min-h-[44px] px-2 text-sm text-[#007185] touch-manipulation hover:text-[#c7511f] hover:underline sm:min-h-0"
+            className="text-sm text-[#007185] touch-manipulation hover:text-[#c7511f] hover:underline"
           >
             Delete
+          </button>
+
+          <span className="hidden h-4 w-px bg-[#d5d9d9] sm:inline" aria-hidden />
+
+          <button
+            type="button"
+            className="text-sm text-[#007185] touch-manipulation hover:text-[#c7511f] hover:underline"
+            onClick={() => alert("Save for later — coming soon!")}
+          >
+            Save for later
           </button>
         </div>
       </div>
 
+      {/* Line Total */}
       <div className="flex items-center justify-between border-t border-[#e7e7e7] pt-3 sm:ml-auto sm:block sm:border-0 sm:pt-0 sm:text-right">
         <span className="text-sm font-medium text-[#565959] sm:hidden">
           Subtotal
         </span>
-        <p className="text-lg font-semibold text-[#0f1111] sm:text-lg md:text-xl">
+        <p className="text-lg font-bold text-[#0f1111] sm:text-xl">
           {formatCurrency(line.lineTotal)}
+        </p>
+        <p className="text-xs text-[#565959] mt-0.5 hidden sm:block">
+          {formatCurrency(Number(line.price))} each
         </p>
       </div>
     </li>

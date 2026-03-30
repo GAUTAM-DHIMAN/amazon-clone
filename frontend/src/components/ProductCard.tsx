@@ -12,40 +12,74 @@ type Props = {
   product: Product;
 };
 
+function getDiscount() {
+  // Generate a realistic-looking discount percentage
+  const discounts = [10, 15, 20, 25, 30, 35, 40];
+  return discounts[Math.floor(Math.random() * discounts.length)];
+}
+
+function StarRating({ rating = 4.2, count = 124 }: { rating?: number; count?: number }) {
+  const full = Math.floor(rating);
+  const half = rating - full >= 0.5;
+  const empty = 5 - full - (half ? 1 : 0);
+
+  return (
+    <div className="flex items-center gap-1">
+      <div className="star-rating text-sm">
+        {"★".repeat(full)}
+        {half && "★"}
+        {"☆".repeat(empty)}
+      </div>
+      <span className="text-xs text-[#007185] hover:text-[#c7511f] cursor-pointer">
+        ({count.toLocaleString()})
+      </span>
+    </div>
+  );
+}
+
 const ProductCard = memo(function ProductCard({ product }: Props) {
   const { main, fraction } = formatPriceParts(product.price);
   const inStock = product.stock > 0;
+  const discount = getDiscount();
+  const originalPrice = Math.round(Number(product.price) / (1 - discount / 100));
 
-  // ✅ FIX: safe image fallback
   const imageSrc =
     product.imageUrl && product.imageUrl.trim() !== ""
       ? product.imageUrl
       : "/placeholder.png";
 
   return (
-    <article className="flex flex-col h-full w-full bg-white p-3 sm:p-4 md:p-5 border border-[#e7e7e7] rounded-md hover:shadow-md transition">
+    <article className="group relative flex flex-col h-full w-full bg-white p-3 sm:p-4 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 border border-[#e7e7e7]">
 
-      <div className="flex justify-end">
+      {/* Discount Badge */}
+      {inStock && (
+        <span className="discount-badge">
+          -{discount}%
+        </span>
+      )}
+
+      {/* Wishlist */}
+      <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
         <WishlistButton productId={product.id} />
       </div>
 
       {/* Image */}
       <Link
         href={`/products/${product.id}`}
-        className="relative mb-3 block w-full h-[180px] sm:h-[200px] overflow-hidden bg-white flex items-center justify-center sm:mb-4"
+        className="relative mb-3 block w-full h-[160px] sm:h-[200px] overflow-hidden bg-white flex items-center justify-center"
       >
         <Image
-          src={imageSrc} // ✅ FIXED HERE
+          src={imageSrc}
           alt={product.name || "Product"}
           fill
           sizes="(max-width: 400px) 42vw, (max-width: 640px) 45vw, (max-width: 1024px) 28vw, 18vw"
-          className="object-contain mix-blend-multiply hover:scale-105 transition"
+          className="object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
         />
       </Link>
 
       {/* Category */}
       {product.category ? (
-        <p className="mb-1 text-xs capitalize text-[#565959]">
+        <p className="mb-0.5 text-[11px] capitalize text-[#565959]">
           {product.category.replace(/-/g, " ")}
         </p>
       ) : null}
@@ -53,71 +87,69 @@ const ProductCard = memo(function ProductCard({ product }: Props) {
       {/* Title */}
       <Link
         href={`/products/${product.id}`}
-        className="line-clamp-2 h-[40px] text-sm font-normal leading-snug text-[#0f1111] hover:text-[#c7511f] sm:text-[15px] md:text-base"
+        className="line-clamp-2 min-h-[36px] text-sm font-normal leading-snug text-[#0f1111] hover:text-[#c7511f] sm:text-[14px]"
       >
         {product.name}
       </Link>
 
-      {/* ⭐ Rating */}
-      <div className="mt-1 flex items-center gap-1 text-xs">
-        <span className="text-yellow-500">★★★★☆</span>
-        <span className="text-[#565959]">(124)</span>
+      {/* Rating */}
+      <div className="mt-1">
+        <StarRating />
       </div>
 
       {/* Price */}
-      <div className="mt-2 flex items-start text-[#0f1111]">
-        <span className="mr-0.5 text-sm">₹</span>
-        <span className="text-xl font-normal sm:text-2xl md:text-[28px] md:leading-none">
-          {main}
-        </span>
-        <span className="pt-0.5 text-xs font-normal sm:pt-1 sm:text-sm md:text-base">
-          .{fraction}
-        </span>
+      <div className="mt-2">
+        <div className="flex items-baseline gap-2">
+          <div className="flex items-start text-[#0f1111]">
+            <span className="text-xs mt-0.5">₹</span>
+            <span className="text-xl font-medium sm:text-2xl">{main}</span>
+            <span className="text-xs mt-0.5">.{fraction}</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 mt-0.5">
+          <span className="text-xs text-[#565959]">M.R.P.:</span>
+          <span className="text-xs text-[#565959] line-through">
+            ₹{originalPrice.toLocaleString()}
+          </span>
+          <span className="text-xs text-[#cc0c39] font-medium">
+            ({discount}% off)
+          </span>
+        </div>
       </div>
 
-      {/* Stock */}
-      <p className="mt-1.5 text-xs md:text-sm">
-        {inStock ? (
-          <span className="text-[#007600]">In Stock</span>
-        ) : (
-          <span className="text-[#cc0c39]">Out of Stock</span>
-        )}
-      </p>
+      {/* Prime & Delivery */}
+      <div className="mt-1.5 flex items-center gap-1">
+        <span className="inline-block bg-[#232f3e] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm tracking-wide">
+          prime
+        </span>
+        <span className="text-[11px] text-[#007185]">FREE Delivery</span>
+      </div>
 
-      {/* Buttons */}
-      <div className="mt-auto flex flex-col gap-2 pt-3">
+      {/* Add to Cart */}
+      <div className="mt-auto pt-3">
         {!inStock ? (
-          <span className="amz-btn-secondary cursor-not-allowed py-2.5 text-[#565959]">
+          <span className="amz-btn-secondary cursor-not-allowed py-2 text-[#565959] text-xs">
             Currently unavailable
           </span>
         ) : (
-          <>
-            <AddToCartButton
-              productId={product.id}
-              className="amz-btn-add py-2.5"
-            />
-
-            <Link
-              href={`/products/${product.id}`}
-              className="amz-btn-secondary block py-2.5 text-center"
-            >
-              See details
-            </Link>
-
-            <button
-              className="text-xs text-blue-600 hover:underline"
-              onClick={(e) => {
-                e.preventDefault();
-                alert("Compare feature coming soon");
-              }}
-            >
-              Compare
-            </button>
-          </>
+          <AddToCartButton
+            productId={product.id}
+            className="amz-btn-add py-2 text-xs flex items-center justify-center gap-1"
+          >
+            <CartMiniIcon /> Add to Cart
+          </AddToCartButton>
         )}
       </div>
     </article>
   );
 });
+
+function CartMiniIcon() {
+  return (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+    </svg>
+  );
+}
 
 export { ProductCard };
