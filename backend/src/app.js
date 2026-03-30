@@ -12,7 +12,10 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: [
+      process.env.CORS_ORIGIN || 'http://localhost:3000',
+      'https://amazon-clone-frontend1.onrender.com'
+    ],
     methods: ['GET', 'POST', 'DELETE', 'PUT', 'OPTIONS'],
     credentials: true,
   })

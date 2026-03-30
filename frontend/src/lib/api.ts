@@ -3,7 +3,7 @@ import { DEFAULT_USER_ID } from "./constants";
 // ✅ FINAL FIX: strict + safe base URL
 const baseUrl = process.env.NEXT_PUBLIC_API_URL
   ? process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "")
-  : "https://amazon-clone-k9mj.onrender.com";
+  : "https://amazon-clone-backend-5i8v.onrender.com";
 
 // ================= TYPES =================
 

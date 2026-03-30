@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 const baseUrl =
   typeof window !== "undefined" && process.env.NEXT_PUBLIC_API_URL
     ? process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "")
-    : "https://amazon-clone-k9mj.onrender.com";
+    : "https://amazon-clone-backend-5i8v.onrender.com";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);

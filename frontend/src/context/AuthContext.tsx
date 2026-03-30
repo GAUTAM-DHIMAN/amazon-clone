@@ -6,7 +6,7 @@ import Cookie from "js-cookie";
 const baseUrl =
   typeof window !== "undefined" && process.env.NEXT_PUBLIC_API_URL
     ? process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "")
-    : "https://amazon-clone-k9mj.onrender.com";
+    : "https://amazon-clone-backend-5i8v.onrender.com";
 
 const AuthContext = createContext<any>(null);
 
